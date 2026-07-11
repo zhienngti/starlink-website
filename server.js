@@ -73,7 +73,7 @@ function callSiliconFlow(message,callback){
       "Authorization":"Bearer "+SF_KEY,
       "Content-Length":Buffer.byteLength(postData)
     },
-    timeout:25000
+    timeout:10000
   };
   var req=https.request(options,function(res){
     var data="";
@@ -122,7 +122,7 @@ var server=http.createServer(function(req,res){
       callSiliconFlow(message,function(err,reply){
         if(err){
           console.error("[chat] error: "+err.message);
-          var msg=err.message==="Timeout"?"Response timeout (>60s). Please try a shorter question.":"Connection error. Please try again.";
+          var msg=err.message==="Timeout"?"Response slow (please try again). Please try a shorter question.":"Connection error. Please try again.";
           res.setHeader("Content-Type","application/json");
           res.end(JSON.stringify({reply:msg}));
           return;
@@ -160,7 +160,7 @@ var server=http.createServer(function(req,res){
   res.end(HTML);
 });
 
-server.timeout = 20000; // 20s < nginx 30s timeout
+server.timeout = 8000; // 20s < nginx 30s timeout
 server.listen(PORT,function(){
   console.log("[ready] Starlink website + AI service on port "+PORT);
 });
