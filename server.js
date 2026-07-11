@@ -73,7 +73,7 @@ function callSiliconFlow(message,callback){
       "Authorization":"Bearer "+SF_KEY,
       "Content-Length":Buffer.byteLength(postData)
     },
-    timeout:60000
+    timeout:25000
   };
   var req=https.request(options,function(res){
     var data="";
@@ -160,6 +160,7 @@ var server=http.createServer(function(req,res){
   res.end(HTML);
 });
 
+server.timeout = 20000; // 20s < nginx 30s timeout
 server.listen(PORT,function(){
   console.log("[ready] Starlink website + AI service on port "+PORT);
 });
