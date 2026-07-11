@@ -148,7 +148,7 @@ const server = http.createServer((req, res) => {
 
   const f = path.join(__dirname, 'index.html');
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.end(fs.readFileSync(f));
+  res.end(fs.readFileSync(f, 'utf8'));
 });
 
 server.listen(PORT, () => {
