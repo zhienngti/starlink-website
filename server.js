@@ -1,4 +1,4 @@
-// Starlink AI Customer Service Backend
+﻿// Starlink AI Customer Service Backend
 // Run: node server.js -> Open browser at http://localhost:3000
 const http = require('http');
 const https = require('https');
@@ -128,6 +128,22 @@ const FALLBACK=[
 function fallbackAnswer(m){
   m = (m||'').toLowerCase();
   for(const it of FALLBACK){ if(it.k.some(t=>m.includes(t))) return it.a; }
+
+// Debug endpoint - remove in production
+const debugEndpoint = (req, res) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify({
+    sf_key_set: !!SF_KEY,
+    sf_key_len: SF_KEY.length,
+    sf_base: SF_BASE,
+    sf_model: SF_MODEL,
+    port: PORT,
+    node_version: process.version,
+    uptime: process.uptime(),
+    memory: { heapUsed: Math.round(process.memoryUsage().heapUsed/1024/1024) + 'MB' }
+  }, null, 2));
+};
+
   return 'I am Starlink AI Customer Service (demo mode with built-in knowledge base). Ask me: what we do / pricing / cooperation process / real delivery verification.';
 }
 
@@ -200,7 +216,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.method === 'POST' && req.url === '/api/chat') {
+  if (req.method === 'GET' && req.url === '/api/debug') { debugEndpoint(req, res); return; }`n`n  if (req.method === 'POST' \&\& req.url === '/api/chat') {
     let body = '';
     req.on('data', c => body += c);
     req.on('end', () => {
