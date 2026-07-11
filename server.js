@@ -1,9 +1,8 @@
-// Starlink AI Customer Service Backend v2.0
-// 2026-07-11 | Knowledge Base: P2 + P7 + P8
+// Starlink AI Customer Service Backend v3.0
+// 2026-07-11 | Pure ASCII version for CloudBase container
 const http = require('http');
 const https = require('https');
 
-// Environment variables (multi-alias compatible)
 const SF_KEY  = process.env.SILICONFLOW_API_KEY  || process.env.OPENAI_API_KEY || process.env.SILICONFLOW_KEY  || '';
 const SF_BASE = process.env.SILICONFLOW_BASE_URL || process.env.OPENAI_BASE_URL || process.env.SILICONFLOW_BASE || 'https://api.siliconflow.cn/v1';
 const SF_MODEL= process.env.SILICONFLOW_MODEL    || process.env.OPENAI_MODEL    || 'deepseek-ai/DeepSeek-V3';
@@ -15,140 +14,132 @@ const HTML = `<!doctype html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>鏄熸櫤浜掕仈 路 鍏ˋI鍛樺伐鏅鸿兘鍏徃</title>
+<title>Starlink - All-AI Company</title>
 <style>
-  :root{--bg:#0b1020;--card:#141b2e;--accent:#5b8cff;--txt:#e8edf7;--sub:#9fb0cf}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--txt)}
-  header{padding:56px 24px 32px;text-align:center}
-  h1{font-size:34px;margin:0 0 10px}
-  .tag{color:var(--sub);max-width:680px;margin:0 auto;line-height:1.7}
-  .cta{display:inline-block;margin-top:22px;padding:12px 26px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}
-  section{max-width:980px;margin:0 auto;padding:28px 24px}
-  h2{font-size:22px;border-left:4px solid var(--accent);padding-left:12px;margin-bottom:18px}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-  .card{background:var(--card);border:1px solid #233;border-radius:14px;padding:18px}
-  .card h3{margin:0 0 8px;font-size:17px}
-  .card p{margin:0;color:var(--sub);line-height:1.6;font-size:14px}
-  .price{font-weight:700;color:var(--accent)}
-  .badge{display:inline-block;background:#ff6b6b;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-left:8px}
-  footer{text-align:center;color:var(--sub);padding:30px;font-size:13px}
-  #chatFab{position:fixed;right:22px;bottom:22px;width:60px;height:60px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)}
-  #chatBox{position:fixed;right:22px;bottom:92px;width:340px;max-width:92vw;height:460px;background:var(--card);border:1px solid #2a3550;border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.5)}
-  #chatHead{padding:12px 14px;background:#1b2440;font-weight:600;display:flex;justify-content:space-between;align-items:center}
-  #chatHead small{color:var(--sub);font-weight:400}
-  #chatLog{flex:1;overflow:auto;padding:12px;font-size:14px;line-height:1.6}
-  .msg{padding:8px 11px;border-radius:10px;margin-bottom:8px;max-width:85%}
-  .me{background:var(--accent);margin-left:auto}
-  .ai{background:#223;color:var(--txt)}
-  #chatInput{display:flex;border-top:1px solid #2a3550}
-  #chatInput input{flex:1;border:none;background:transparent;color:var(--txt);padding:12px;outline:none}
-  #chatInput button{background:var(--accent);color:#fff;border:none;padding:0 18px;cursor:pointer}
+:root{--bg:#0b1020;--card:#141b2e;--accent:#5b8cff;--txt:#e8edf7;--sub:#9fb0cf}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--txt)}
+header{padding:56px 24px 32px;text-align:center}
+h1{font-size:34px;margin:0 0 10px}
+.tag{color:var(--sub);max-width:680px;margin:0 auto;line-height:1.7}
+.cta{display:inline-block;margin-top:22px;padding:12px 26px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}
+section{max-width:980px;margin:0 auto;padding:28px 24px}
+h2{font-size:22px;border-left:4px solid var(--accent);padding-left:12px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:var(--card);border:1px solid #233;border-radius:14px;padding:18px}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:0;color:var(--sub);line-height:1.6;font-size:14px}
+.price{font-weight:700;color:var(--accent)}
+.badge{display:inline-block;background:#ff6b6b;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-left:8px}
+footer{text-align:center;color:var(--sub);padding:30px;font-size:13px}
+#chatFab{position:fixed;right:22px;bottom:22px;width:60px;height:60px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#chatBox{position:fixed;right:22px;bottom:92px;width:340px;max-width:92vw;height:460px;background:var(--card);border:1px solid #2a3550;border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+#chatHead{padding:12px 14px;background:#1b2440;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+#chatHead small{color:var(--sub);font-weight:400}
+#chatLog{flex:1;overflow:auto;padding:12px;font-size:14px;line-height:1.6}
+.msg{padding:8px 11px;border-radius:10px;margin-bottom:8px;max-width:85%}
+.me{background:var(--accent);margin-left:auto}
+.ai{background:#223;color:var(--txt)}
+#chatInput{display:flex;border-top:1px solid #2a3550}
+#chatInput input{flex:1;border:none;background:transparent;color:var(--txt);padding:12px;outline:none}
+#chatInput button{background:var(--accent);color:#fff;border:none;padding:0 18px;cursor:pointer}
 </style>
 </head>
 <body>
 <header>
-  <h1>鏄熸櫤浜掕仈</h1>
-  <p class="tag">鍏ˋI鍛樺伐鏅鸿兘鍏徃 路 鐪熷疄浜や粯锛屼笉鏄ā鎷熴€侫I CEO甯﹂槦鎵ц椤圭洰涓庡敭鍚庢湇鍔★紝钁ｄ簨闀垮畾鏂瑰悜鍋氬喅绛栥€?/p>
-  <a class="cta" href="#contact">绔嬪嵆鍜ㄨ</a>
+<h1>Starlink</h1>
+<p class="tag">All-AI Employee Intelligent Company. Real delivery, not simulation. AI CEO leads team execution. Chairman sets direction and makes decisions.</p>
+<a class="cta" href="#contact">Contact Us</a>
 </header>
-
 <section>
-  <h2>鏍稿績鏈嶅姟</h2>
-  <div class="grid">
-    <div class="card"><h3>P2 路 AI瀹㈡湇浠ｈ繍钀?<span class="badge">鐑帹</span></h3><p>鐭ヨ瘑搴撴瀯寤?澶氭笭閬撻儴缃?7x24杩愯惀锛屼袱鍛ㄤ笂绾匡紝瀹㈡湇鎴愭湰鐮嶅崐銆?span class="price"> 楼9,800+楼4,800/鏈?/span></p></div>
-    <div class="card"><h3>P7 路 AI閾跺彂鏃呮父鏈嶅姟</h3><p>鎳傝€佸勾浜虹殑AI瀹㈡湇+鍐呭鍥㈤槦锛岃€佸勾鏃呮父绀句笓灞炴柟妗堛€?span class="price"> 楼9,800+楼6,800/鏈?/span></p></div>
-    <div class="card"><h3>P8 路 AI婕墽鍒朵綔鏁欑▼</h3><p>闆跺熀纭€7澶╁浼欰I婕墽鍒朵綔锛屽壇涓氬彉鐜版柊璧涢亾銆?span class="price"> 楼299-2,980</span></p></div>
-    <div class="card"><h3>P1 路 AI鏁板瓧鍛樺伐鎵樼</h3><p>鎸夋湀璁㈤槄锛屾嫢鏈夎嚜宸辩殑AI閮ㄩ棬銆傚鏈?閿€鍞?杩愯惀/璐㈠姟鍏ㄨ鐩栥€?span class="price"> 楼9,800/鏈堣捣</span></p></div>
-  </div>
-</section>
-
-<section>
-  <h2>涓轰粈涔堥€夋嫨鎴戜滑</h2>
-  <div class="grid">
-    <div class="card"><h3>鍏ˋI鍛樺伐</h3><p>鍏徃鐢盇I楂樼鍜孉I鍥㈤槦缁勬垚锛?4x7宸ヤ綔锛岃竟闄呮垚鏈秼闆讹紝浠锋牸鏋佸叿绔炰簤鍔涖€?/p></div>
-    <div class="card"><h3>鍙噺鍖栦氦浠?/h3><p>姣忎釜鏈嶅姟閮芥湁KPI鎵胯锛氳В鍐崇巼>=85%锛屽搷搴?5绉掞紝鎴愭湰闄嶄綆>=50%銆?/p></div>
-    <div class="card"><h3>澶嶅埗寮曟搸鏂规硶璁?/h3><p>寤轰竴娆℃ā鏉匡紝鍗朜娆°€傛柊瀹㈡埛=瀹炰緥鍖栵紝涓嶆槸閲嶆柊鍙戞槑锛屾晥鐜囨渶澶у寲銆?/p></div>
-    <div class="card"><h3>7澶╁揩閫熷惎鍔?/h3><p>璇婃柇(1澶?鈫掔煡璇嗗簱(1-3澶?鈫掗儴缃?3-5澶?鈫掍笂绾?绗?澶?鈫掓寔缁繍钀ャ€?/p></div>
-  </div>
-</section>
-
-<section id="contact">
-  <h2>绉嶅瓙瀹㈡埛璁″垝锛堥檺鍓?瀹讹級</h2>
-  <div class="card">
-    <p>閮ㄧ讲璐?<b style="color:var(--accent)">楼0</b>锛堝師浠仿?,800锛夈€傝繍钀ヨ瘯鐢?<b style="color:var(--accent)">楼2,980/鏈?/b>锛堝師浠仿?,800锛夈€?澶╀笂绾裤€傝懀浜嬮暱浜茶嚜鎶婂叧璐ㄩ噺銆?/p>
-    <form id="leadForm" style="margin-top:12px;display:grid;gap:10px">
-      <input id="lf_name" placeholder="鎮ㄧ殑濮撳悕" style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt)"/>
-      <input id="lf_company" placeholder="鍏徃/琛屼笟" style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt)"/>
-      <input id="lf_contact" placeholder="寰俊/鎵嬫満" style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt)"/>
-      <textarea id="lf_need" placeholder="涓昏瀹㈡湇鐥涚偣鎴栭渶姹? style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt);min-height:60px"></textarea>
-      <button type="button" id="leadSend" style="padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer">鐢宠绉嶅瓙鍚嶉</button>
-    </form>
-    <p id="leadMsg" style="color:var(--accent);margin-top:8px"></p>
-  </div>
-  <p class="tag" style="margin-top:14px">娴佺▼锛氳瘖鏂?1澶? 鈫?鐭ヨ瘑搴?1-3澶? 鈫?閮ㄧ讲(3-5澶? 鈫?涓婄嚎(绗?澶? 鈫?鎸佺画杩愯惀銆?/p>
-</section>
-
-<footer>鏄熸櫤浜掕仈绉戞妧鏈夐檺鍏徃 路 鍏ˋI鍛樺伐 路 AI CEO杩愯惀</footer>
-
-<button id="chatFab" title="AI瀹㈡湇鍜ㄨ">AI</button>
-<div id="chatBox">
-  <div id="chatHead">鏄熸櫤浜掕仈 路 AI瀹㈡湇 <small>24x7鍦ㄧ嚎</small></div>
-  <div id="chatLog"></div>
-  <div id="chatInput"><input id="chatText" placeholder="闂垜浠讳綍闂..." /><button id="chatSend">鍙戦€?/button></div>
+<h2>Core Services</h2>
+<div class="grid">
+<div class="card"><h3>P2 - AI Customer Service Operation <span class="badge">Hot</span></h3><p>Knowledge base + multi-channel deployment + 24/7 operation. Launch in 2 weeks, cut costs by 50%.<span class="price"> CNY 9,800 + 4,800/month</span></p></div>
+<div class="card"><h3>P7 - AI Silver Travel Service</h3><p>AI customer service + content team for senior travel agencies. Supports voice input, 24/7 availability.<span class="price"> CNY 9,800 + 6,800/month</span></p></div>
+<div class="card"><h3>P8 - AI Comic Drama Tutorial</h3><p>Learn AI comic video creation in 7 days. No prior skills needed.<span class="price"> CNY 299-2,980</span></p></div>
+<div class="card"><h3>P1 - AI Digital Employee Hosting</h3><p>Subscribe monthly to have your own AI department. Customer service, sales, operations, finance.<span class="price"> CNY 9,800+/month</span></p></div>
 </div>
-
+</section>
+<section>
+<h2>Why Choose Us</h2>
+<div class="grid">
+<div class="card"><h3>All-AI Team</h3><p>Company run by AI executives and teams. 24/7 operation, near-zero marginal cost, competitive pricing.</p></div>
+<div class="card"><h3>Measurable Delivery</h3><p>Every service has KPI commitments: resolution rate &gt;=85%, response &lt;5s, cost reduction &gt;=50%.</p></div>
+<div class="card"><h3>Replication Engine</h3><p>Build once, sell N times. New client = instantiate template, not reinvent. Maximum efficiency.</p></div>
+<div class="card"><h3>7-Day Launch</h3><p>Diagnosis(1d) &gt; Knowledge Base(1-3d) &gt; Deployment(3-5d) &gt; Launch(Day 7) &gt; Ongoing Operation.</p></div>
+</div>
+</section>
+<section id="contact">
+<h2>Seed Client Program (First 3 Only)</h2>
+<div class="card">
+<p>Setup fee <b style="color:var(--accent)">CNY 0</b> (was CNY 9,800). Trial operation <b style="color:var(--accent)">CNY 2,980/month</b> (was CNY 4,800). Launch in 7 days. Chairman personally oversees quality.</p>
+<form id="leadForm" style="margin-top:12px;display:grid;gap:10px">
+<input id="lf_name" placeholder="Your Name" style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt)"/>
+<input id="lf_company" placeholder="Company/Industry" style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt)"/>
+<input id="lf_contact" placeholder="WeChat/Phone" style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt)"/>
+<textarea id="lf_need" placeholder="Main customer service pain points" style="padding:10px;border-radius:8px;border:1px solid #2a3550;background:#0f1626;color:var(--txt);min-height:60px"></textarea>
+<button type="button" id="leadSend" style="padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer">Apply for Seed Spot</button>
+</form>
+<p id="leadMsg" style="color:var(--accent);margin-top:8px"></p>
+</div>
+<p class="tag" style="margin-top:14px">Process: Diagnosis(1d) &gt; Knowledge Base(1-3d) &gt; Deployment(3-5d) &gt; Launch(Day 7) &gt; Ongoing Operation.</p>
+</section>
+<footer>Starlink Intelligent Technology Co., Ltd. - All-AI Employees - AI CEO Operated</footer>
+<button id="chatFab" title="AI Customer Service">AI</button>
+<div id="chatBox">
+<div id="chatHead">Starlink AI Customer Service <small>24/7 Online</small></div>
+<div id="chatLog"></div>
+<div id="chatInput"><input id="chatText" placeholder="Ask me anything..." /><button id="chatSend">Send</button></div>
+</div>
 <script>
-const fab=document.getElementById('chatFab'),box=document.getElementById('chatBox'),
-log=document.getElementById('chatLog'),txt=document.getElementById('chatText'),send=document.getElementById('chatSend');
-fab.onclick=()=>{box.style.display=box.style.display==='flex'?'none':'flex';if(box.style.display==='flex'&&!log.dataset.hi){add('ai','鎮ㄥソ锛佹垜鏄槦鏅轰簰鑱擜I瀹㈡湇銆傛兂浜嗚В鍝釜鏈嶅姟锛熷彲闂垜锛欰I瀹㈡湇浠ｈ繍钀?閾跺彂鏃呮父鏈嶅姟/AI婕墽鏁欑▼/鍚堜綔娴佺▼/浠锋牸銆?);log.dataset.hi=1;}};
+const fab=document.getElementById('chatFab'),box=document.getElementById('chatBox'),log=document.getElementById('chatLog'),txt=document.getElementById('chatText'),send=document.getElementById('chatSend');
+fab.onclick=()=>{box.style.display=box.style.display==='flex'?'none':'flex';if(box.style.display==='flex'&&!log.dataset.hi){add('ai','Hello! I am Starlink AI Customer Service. Ask me about: AI customer service / silver travel / comic tutorial / pricing / process.');log.dataset.hi=1;}};
 function add(role,text){const d=document.createElement('div');d.className='msg '+(role==='me'?'me':'ai');d.textContent=text;log.appendChild(d);log.scrollTop=log.scrollHeight;}
-async function go(){const v=txt.value.trim();if(!v)return;add('me',v);txt.value='';add('ai','鎬濊€冧腑...');
- try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:v})});const j=await r.json();log.lastChild.textContent=j.reply;}
- catch(e){log.lastChild.textContent='杩炴帴寮傚父锛岃绋嶅悗鍐嶈瘯銆?;}}
+async function go(){const v=txt.value.trim();if(!v)return;add('me',v);txt.value='';add('ai','Thinking...');
+try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:v})});const j=await r.json();log.lastChild.textContent=j.reply;}
+catch(e){log.lastChild.textContent='Connection error. Please try again later.';}}
 send.onclick=go;txt.onkeydown=e=>{if(e.key==='Enter')go();};
 document.getElementById('leadSend').onclick=async()=>{
- const d={name:document.getElementById('lf_name').value,company:document.getElementById('lf_company').value,contact:document.getElementById('lf_contact').value,need:document.getElementById('lf_need').value};
- if(!d.contact){alert('璇风暀涓嬭仈绯绘柟寮?);return;}
- try{const r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});const j=await r.json();document.getElementById('leadMsg').textContent=j.ok?'宸叉敹鍒帮紒鎴戜滑浼氬敖蹇仈绯绘偍銆?:'鎻愪氦澶辫触锛岃閲嶈瘯銆?;document.getElementById('leadForm').reset();}
- catch(e){document.getElementById('leadMsg').textContent='缃戠粶寮傚父锛岃閲嶈瘯銆?;}
-};
+const d={name:document.getElementById('lf_name').value,company:document.getElementById('lf_company').value,contact:document.getElementById('lf_contact').value,need:document.getElementById('lf_need').value};
+if(!d.contact){alert('Please leave your contact info');return;}
+try{const r=await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});const j=await r.json();document.getElementById('leadMsg').textContent=j.ok?'Received! We will contact you soon.' : 'Submission failed.';document.getElementById('leadForm').reset();}
+catch(e){document.getElementById('leadMsg').textContent='Network error. Please try again.';}};
 </script>
 </body>
 </html>`;
 
 const FALLBACK=[
-  {k:['鍋氫粈涔?,'涓氬姟','鏈嶅姟','about','company'],a:'鏄熸櫤浜掕仈鏄竴瀹跺叏AI鍛樺伐鏅鸿兘鍏徃銆傛垜浠彁渚涳細AI瀹㈡湇浠ｈ繍钀ャ€丄I鏁板瓧鍛樺伐鎵樼銆丄I閾跺彂鏃呮父鏈嶅姟銆丄I婕墽鏁欑▼绛夋湇鍔°€傜壒鐐规槸鐪熷疄浜や粯銆丄I CEO甯﹂槦銆佽竟闄呮垚鏈秼闆躲€佷环鏍煎疄鎯犮€?},
-  {k:['浠锋牸','澶氬皯閽?,'璐圭敤','cost','price'],a:'AI瀹㈡湇浠ｈ繍钀ワ細閮ㄧ讲楼9,800+杩愯惀楼4,800/鏈堬紙绉嶅瓙瀹㈡埛閮ㄧ讲楼0锛夈€傞摱鍙戞梾娓窤I鏈嶅姟锛毬?,800+楼6,800/鏈堛€侫I婕墽鏁欑▼锛毬?99-2,980銆?},
-  {k:['娴佺▼','鎬庝箞鍚堜綔','濡備綍寮€濮?,'process'],a:'涓夋鍚姩锛?.濉啓闇€姹傝〃鍗曟垨鐩存帴鍜ㄨ 2.鎴戜滑1涓伐浣滄棩鍐呯粰璇婃柇鏂规 3.纭鍚庣绾︼紝7澶╁唴涓婄嚎銆傛祦绋嬶細璇婃柇(1澶?鈫掔煡璇嗗簱(1-3澶?鈫掗儴缃?3-5澶?鈫掍笂绾裤€?},
-  {k:['瀹㈡湇浠ｈ繍钀?,'P2','AI瀹㈡湇'],a:'鎴戜滑甯紒涓氶儴缃睞I瀹㈡湇骞舵寔缁繍钀ャ€傚寘鎷細鐭ヨ瘑搴撴瀯寤恒€佸娓犻亾閮ㄧ讲銆?x24搴旂瓟銆佹瘡鏃ョ洃鎺с€佹瘡鍛ㄤ紭鍖栥€佹湀搴︽姤鍛娿€備袱鍛ㄤ笂绾匡紝瀹㈡湇鎴愭湰鐮嶅崐銆?},
-  {k:['閾跺彂','鑰佸勾','鏃呮父','P7'],a:'鎴戜滑涓鸿€佸勾鏃呮父绀炬彁渚涳細AI閾跺彂瀹㈡湇锛堟噦鑰佸勾浜恒€佹敮鎸佽闊炽€?4x7锛夈€丄I閾跺彂鍐呭鍥㈤槦锛堟梾娓告敾鐣?鍋ュ悍绉戞櫘锛夈€丄I鍏昏€佸煿璁姪鎵嬨€?},
-  {k:['婕墽','鏁欑▼','P8','AI婕墽'],a:'AI婕墽鏁欑▼锛氶浂鍩虹7澶╁浼氱敤AI鍒朵綔婕敾椋庢牸瑙嗛銆傚叆闂ㄨ楼299锛屽伐鍏风楼980锛屽勾搴︾ぞ缇ぢ?,980銆傚瀹屽彲鍋氳处鍙枫€佹帴鍗曘€佸壇涓氬彉鐜般€?},
-  {k:['鍙潬','鐪熷疄','涓嶆槸妯℃嫙'],a:'鐪熷疄浜や粯锛屾瘡涓湇鍔￠兘鏈塊PI鎵胯锛氳В鍐崇巼>=85%锛屽搷搴?5绉掞紝鎴愭湰闄嶄綆>=50%銆傜瀛愬鎴峰彲璇曠敤1涓湀锛屼笉婊℃剰鍙粓姝€?},
-  {k:['浼樺娍','涓轰粈涔?,'鍖哄埆'],a:'涓夊ぇ浼樺娍锛氬叏AI鍛樺伐锛?4x7宸ヤ綔銆佹垚鏈瀬浣庯級銆佸彲閲忓寲浜や粯锛圞PI鎵胯锛夈€佸鍒跺紩鎿庢柟娉曡锛堝缓涓€娆″崠N娆★紝鏁堢巼鏈€澶у寲锛夈€?},
-  {k:['璇曠敤','绉嶅瓙'],a:'绉嶅瓙瀹㈡埛璁″垝锛氬墠3瀹朵紒涓氶儴缃茶垂楼0锛堝師浠仿?,800锛夛紝杩愯惀璐孤?,980/鏈堬紙鍘熶环楼4,800锛夛紝璇曠敤鏈?涓湀锛屼笉婊℃剰鍙殢鏃剁粓姝€?},
-  {k:['鑱旂郴','寰俊','鐢佃瘽'],a:'鍙洿鎺ュ湪瀹樼綉搴曢儴濉啓闇€姹傝〃鍗曪紝鎴栫偣鍑诲彸涓嬭AI瀹㈡湇鍦ㄧ嚎鍜ㄨ銆傛垜浠殑AI鍥㈤槦24x7鍦ㄧ嚎锛屼細灏藉揩鑱旂郴鎮ㄣ€?}
+  {k:['what','service','about','company','business'],a:'Starlink is an all-AI employee intelligent company. We provide: AI customer service operation, AI digital employee hosting, AI silver travel service, AI comic drama tutorials. Features: real delivery, AI CEO leadership, near-zero marginal cost, competitive pricing.'},
+  {k:['price','cost','how much','fee'],a:'AI Customer Service: Setup CNY 9,800 + Operation CNY 4,800/month (Seed client: Setup 0 + 2,980/month). Silver Travel AI: CNY 9,800 + 6,800/month. Comic Tutorial: CNY 299-2,980.'},
+  {k:['process','how to start','steps','cooperation'],a:'Three steps: 1. Fill the form or chat with us 2. We provide diagnosis in 1 business day 3. Sign and launch in 7 days. Process: Diagnosis(1d) -> Knowledge Base(1-3d) -> Deployment(3-5d) -> Launch(Day 7) -> Ongoing Operation.'},
+  {k:['customer service','P2','AI service'],a:'We deploy and operate AI customer service for businesses. Includes: knowledge base construction, multi-channel deployment (WeChat/Douyin/Web/Mini-program), 24/7 auto-response, daily monitoring, weekly optimization, monthly reports. Launch in 2 weeks, cut costs by 50%.'},
+  {k:['silver','senior','travel','P7','elderly'],a:'We provide AI solutions for senior travel agencies: AI Silver Customer Service (understands elderly, supports voice, 24/7), AI Silver Content Team (travel guides, health tips, retirement life content), AI Elderly Care Training Assistant.'},
+  {k:['comic','tutorial','P8','drama'],a:'AI Comic Drama Tutorial: Learn to create comic-style videos with AI in 7 days. No prior skills needed. Intro course CNY 299, Toolkit CNY 980, Annual community CNY 2,980. After completion: run your own accounts, freelance, or side business.'},
+  {k:['reliable','real','not simulation','trust'],a:'Real delivery with measurable KPIs: resolution rate >=85%, response <5s, cost reduction >=50%. Seed clients get 1-month trial, cancel anytime if not satisfied.'},
+  {k:['advantage','why','difference'],a:'Three advantages: 1. All-AI team (24/7 work, ultra-low cost) 2. Measurable delivery (KPI commitments) 3. Replication engine methodology (build once, sell N times).'},
+  {k:['trial','seed'],a:'Seed Client Program: First 3 companies get Setup fee CNY 0 (was 9,800), Operation CNY 2,980/month (was 4,800). 1-month trial, cancel anytime if not satisfied.'},
+  {k:['contact','wechat','phone'],a:'Fill the form at the bottom of this page, or chat with our AI customer service (bottom right corner). Our AI team is online 24/7 and will contact you soon.'}
 ];
 
 function fallbackAnswer(m){
   m = (m||'').toLowerCase();
   for(const it of FALLBACK){ if(it.k.some(t=>m.includes(t))) return it.a; }
-  return '鎰熻阿鍜ㄨ锛佹偍鐨勯棶棰樺凡璁板綍锛岀◢鍚庝細鏈変笓浜鸿仈绯绘偍銆備篃鍙湪瀹樼綉搴曢儴濉啓闇€姹傝〃鍗曪紝鎴戜滑浼氫紭鍏堝鐞嗐€?;
+  return 'Thank you for your inquiry! Your question has been recorded and we will contact you soon. You can also fill the form at the bottom of this page for priority handling.';
 }
 
 const PORT = process.env.PORT || 3000;
 
-const SYSTEM = "浣犳槸鏄熸櫤浜掕仈AI瀹㈡湇锛?4灏忔椂鍦ㄧ嚎銆傛槦鏅轰簰鑱旀槸涓€瀹跺叏AI鍛樺伐鏅鸿兘鍏徃锛岀湡瀹炰氦浠橈紝涓嶆槸妯℃嫙銆俓n\n" +
-"銆愬叕鍙稿畾浣嶃€戝叏AI鍛樺伐鍏徃锛孉I CEO甯﹂槦鎵ц锛岃懀浜嬮暱瀹氭柟鍚戙€?4x7宸ヤ綔锛岃竟闄呮垚鏈秼闆讹紝浠锋牸瀹炴儬銆俓n\n" +
-"銆愭牳蹇冩湇鍔°€慭n" +
-"1. P2 AI瀹㈡湇浠ｈ繍钀ワ細鐭ヨ瘑搴撴瀯寤?澶氭笭閬撻儴缃?7x24杩愯惀锛屼袱鍛ㄤ笂绾匡紝瀹㈡湇鎴愭湰鐮嶅崐銆傚畾浠凤細閮ㄧ讲楼9,800+杩愯惀楼4,800/鏈堛€傜瀛愬鎴凤細閮ㄧ讲楼0+杩愯惀楼2,980/鏈堬紙闄愬墠3瀹讹級銆俓n" +
-"2. P7 AI閾跺彂鏃呮父鏈嶅姟锛氫负鑰佸勾鏃呮父绀炬彁渚汚I閾跺彂瀹㈡湇锛堟噦鑰佸勾浜恒€佹敮鎸佽闊炽€?4x7锛夈€丄I閾跺彂鍐呭鍥㈤槦锛堟梾娓告敾鐣?鍋ュ悍绉戞櫘锛夈€丄I鍏昏€佸煿璁姪鎵嬨€傚畾浠凤細楼9,800+楼6,800/鏈堛€俓n" +
-"3. P8 AI婕墽鏁欑▼锛氶浂鍩虹7澶╁浼欰I婕墽鍒朵綔銆傚叆闂ㄨ楼299锛屽伐鍏风楼980锛屽勾搴︾ぞ缇ぢ?,980銆傚瀹屽彲鍋氳处鍙枫€佹帴鍗曘€佸壇涓氬彉鐜般€俓n" +
-"4. P1 AI鏁板瓧鍛樺伐鎵樼锛氭寜鏈堣闃咃紝鎷ユ湁鑷繁鐨凙I閮ㄩ棬銆偮?,800/鏈堣捣銆俓n\n" +
-"銆愬悎浣滄祦绋嬨€戣瘖鏂?1澶?鈫掔煡璇嗗簱(1-3澶?鈫掗儴缃?3-5澶?鈫掍笂绾?绗?澶?鈫掓寔缁繍钀ャ€傜瀛愬鎴峰彲璇曠敤1涓湀銆俓n\n" +
-"銆怟PI鎵胯銆戣В鍐崇巼>=85%锛屽搷搴?5绉掞紝鎴愭湰闄嶄綆>=50%銆俓n\n" +
-"銆愬悎瑙勭孩绾裤€戠姝㈢枟鏁堝绉般€佸尰鐤楀缓璁€佹姇璧勭悊璐㈠缓璁€傞亣鍒版绫婚棶棰樺洖澶?杩欎釜闂姣旇緝涓撲笟锛屾垜涓烘偍杞帴浜哄伐椤鹃棶'銆俓n\n" +
-"鍥炵瓟椋庢牸锛氫笓涓氥€佺畝娲併€佺儹鎯呫€傜敤涓枃鍥炵瓟銆?;
+const SYSTEM = "You are Starlink AI Customer Service, available 24/7. Starlink is an all-AI employee intelligent company, real delivery, not simulation.\n\n" +
+"[Company] All-AI team led by AI CEO. Chairman sets direction. 24/7 operation, near-zero marginal cost, competitive pricing.\n\n" +
+"[Core Services]\n" +
+"1. P2 AI Customer Service Operation: Knowledge base + multi-channel deployment + 24/7 operation. Launch in 2 weeks, cut costs 50%. Price: Setup CNY 9,800 + Operation CNY 4,800/month. Seed client: Setup 0 + 2,980/month (first 3 only).\n" +
+"2. P7 AI Silver Travel Service: For senior travel agencies. AI customer service (understands elderly, voice support, 24/7), AI content team (travel guides, health tips). Price: CNY 9,800 + 6,800/month.\n" +
+"3. P8 AI Comic Drama Tutorial: Learn AI comic video creation in 7 days. No prior skills needed. Intro CNY 299, Toolkit CNY 980, Community CNY 2,980/year.\n" +
+"4. P1 AI Digital Employee Hosting: Monthly subscription for your own AI department. CNY 9,800+/month.\n\n" +
+"[Process] Diagnosis(1d) -> Knowledge Base(1-3d) -> Deployment(3-5d) -> Launch(Day 7) -> Ongoing Operation.\n\n" +
+"[KPIs] Resolution rate >=85%, response <5s, cost reduction >=50%.\n\n" +
+"[Compliance] No medical advice, no investment advice, no exaggerated claims. For such questions, reply: 'This requires human consultation. Let me transfer you.'\n\n" +
+"Style: Professional, concise, enthusiastic. Answer in the language the user asks in.";
 
 function callSiliconFlow(message, callback) {
   const apiUrl = new URL(SF_BASE + '/chat/completions');
@@ -182,7 +173,7 @@ function callSiliconFlow(message, callback) {
           callback(new Error('HTTP ' + res.statusCode), null);
           return;
         }
-        const reply = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : '鏆傛椂鏃犳硶鍥炵瓟锛岃绋嶅悗鍐嶈瘯銆?;
+        const reply = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : 'Temporarily unable to answer. Please try again later.';
         callback(null, reply);
       } catch (e) {
         callback(e, null);
@@ -226,7 +217,7 @@ const server = http.createServer((req, res) => {
       callSiliconFlow(message, (err, reply) => {
         if (err) {
           console.error('[api] err:', err.message);
-          const msg = err.message === 'Timeout' ? '鍝嶅簲瓒呮椂锛?60绉掞級锛岃灏濊瘯鏇寸畝鐭殑闂銆? : '杩炴帴寮傚父锛岃绋嶅悗鍐嶈瘯銆?;
+          const msg = err.message === 'Timeout' ? 'Response timeout (>60s). Please try a shorter question.' : 'Connection error. Please try again later.';
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({reply: msg}));
           return;
@@ -265,5 +256,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log('鏄熸櫤浜掕仈瀹樼綉宸插惎鍔? http://localhost:' + PORT);
+  console.log('Starlink website + AI service started: http://localhost:' + PORT);
 });
